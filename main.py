@@ -732,3 +732,64 @@ class SourseFolderProcessor:
 
         elapsed = time.perf_counter() - start
         print(f"Befejezve: {self._format_duration(elapsed)}")
+
+    def _process_records(self, records: list[OrganizationRecord]) -> list[EmailLookupResult]:
+        output_rows: list[EmailLookupResult] = []
+        total_records = len(records)
+        processed = 0
+        found_count = 0
+        verified_count = 0
+
+        self._render_record_progress(
+            processed=processed,
+            total=total_records,
+            found_count=found_count,
+            verified_count=verified_count,
+        )
+
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            future_map = {
+                executor.submit(
+                    self.finder.find_email,
+                    record.org_name,
+                    self._extract_country_code(record.project_number),
+                ): record
+                for record in records
+            }
+
+            for future in as_completed(future_map):
+                record = future_map[future]
+                try:
+                    email, verified = future.result()
+                except Exception as exc:
+                    print("")
+                    print(f"[WARN] Email hiba: {record.org_name} ({exc})")
+                    email, verified = None, False
+
+                output_email = email if verified else None
+                processed += 1
+                if email:
+                    found_count += 1
+                if verified:
+                    verified_count += 1
+
+                output = EmailLookupResult(
+                    source_file=record.source_file,
+                    sheet_name=record.sheet_name,
+                    project_number=record.project_number,
+                    org_name=record.org_name,
+                    org_city=record.org_city,
+                    email=output_email,
+                    verified=verified,
+                )
+                output_rows.append(output)
+                self._render_record_progress(
+                    processed=processed,
+                    total=total_records,
+                    found_count=found_count,
+                    verified_count=verified_count,
+                )
+
+        print("")
+
+        return output_rows
