@@ -377,3 +377,47 @@ class ExcelStructureDetector:
             records.extend(sheet_records)
 
         return self._deduplicate(records)
+
+    def _extract_records_from_sheet(self, excel_path: Path, sheet_name: str) -> list[OrganizationRecord]:
+        try:
+            raw = pd.read_excel(excel_path, sheet_name=sheet_name, header=None, dtype=str)
+        except Exception as exc:
+            print(f"[WARN] Nem sikerult beolvasni a lapot: {excel_path.name} / {sheet_name} ({exc})")
+            return []
+
+        raw = raw.fillna("")
+        records: list[OrganizationRecord] = []
+
+        for row_idx in range(len(raw)):
+            row_values = [self._clean_cell(value) for value in raw.iloc[row_idx].tolist()]
+            project_hit = self._find_project_in_row(row_values)
+
+            if not project_hit:
+                continue
+
+            project_col, project_number = project_hit
+            header_map = self._find_nearby_header_map(raw, row_idx)
+
+            org_col = self._pick_org_column(row_values, project_col, header_map.get("org"))
+            if org_col is None:
+                continue
+
+            org_name = self._clean_cell(row_values[org_col])
+            if not org_name or self._looks_like_noise(org_name):
+                continue
+
+            address = self._pick_address(row_values, org_col, header_map.get("city"))
+            city = self._pick_city(row_values, org_col, header_map.get("city"), address)
+
+            records.append(
+                OrganizationRecord(
+                    source_file=excel_path.name,
+                    sheet_name=sheet_name,
+                    project_number=project_number,
+                    org_name=org_name,
+                    org_address=address,
+                    org_city=city,
+                )
+            )
+
+        return records
