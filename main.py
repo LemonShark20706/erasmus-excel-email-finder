@@ -793,3 +793,10 @@ class SourseFolderProcessor:
         print("")
 
         return output_rows
+
+    def _extract_country_code(self, project_number: str) -> Optional[str]:
+        compact = re.sub(r"\s+", "", str(project_number).upper())
+        match = re.search(r"^\d{4}-\d-([A-Z]{2})\d{2}-KA1\d{2}-[A-Z]{3}-\d{5,}$", compact)
+        if not match:
+            return None
+        return match.group(1)
