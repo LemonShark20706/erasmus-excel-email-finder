@@ -618,3 +618,37 @@ class ExcelStructureDetector:
                 deduped[key] = record
 
         return list(deduped.values())
+
+class OutputExcelWriter:
+    def write(self, rows: list[EmailLookupResult], output_path: Path) -> None:
+        workbook = xlsxwriter.Workbook(str(output_path))
+        worksheet = workbook.add_worksheet("Emails")
+
+        headers = [
+            "ProjectNumber",
+            "OrgName",
+            "Email",
+            "OrgCity",
+            "Verified",
+        ]
+
+        bold = workbook.add_format({"bold": True})
+        center = workbook.add_format({"align": "center"})
+
+        for col, header in enumerate(headers):
+            worksheet.write(0, col, header, bold)
+
+        worksheet.set_column("A:A", 30)
+        worksheet.set_column("B:B", 55)
+        worksheet.set_column("C:C", 45)
+        worksheet.set_column("D:D", 25)
+        worksheet.set_column("E:E", 12)
+
+        for row_idx, row in enumerate(rows, start=1):
+            worksheet.write(row_idx, 0, row.project_number)
+            worksheet.write(row_idx, 1, row.org_name.replace('"', ""))
+            worksheet.write(row_idx, 2, row.email or "")
+            worksheet.write(row_idx, 3, row.org_city)
+            worksheet.write(row_idx, 4, "YES" if row.verified else "NO", center)
+
+        workbook.close()
