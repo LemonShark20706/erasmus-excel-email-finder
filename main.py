@@ -652,3 +652,8 @@ class OutputExcelWriter:
             worksheet.write(row_idx, 4, "YES" if row.verified else "NO", center)
 
         workbook.close()
+
+class StartupFolderValidator:
+    def __init__(self, source_dir: Path, done_dir: Path) -> None:
+        self.source_dir = source_dir
+        self.done_dir = done_dir
