@@ -906,3 +906,6 @@ def main() -> None:
     )
     app = ConsoleMenuApp(processor)
     app.run()
+
+if __name__ == "__main__":
+    main()
