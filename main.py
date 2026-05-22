@@ -43,3 +43,12 @@ questionary = None
 
 def clear_console() -> None:
     os.system("cls" if os.name == "nt" else "clear")
+
+def load_runtime_dependencies() -> None:
+    global pd, requests, xlsxwriter, DDGS, questionary
+
+    pd = importlib.import_module("pandas")
+    requests = importlib.import_module("requests")
+    xlsxwriter = importlib.import_module("xlsxwriter")
+    DDGS = getattr(importlib.import_module("ddgs"), "DDGS")
+    questionary = importlib.import_module("questionary")
