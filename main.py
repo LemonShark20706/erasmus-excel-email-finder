@@ -800,3 +800,15 @@ class SourseFolderProcessor:
         if not match:
             return None
         return match.group(1)
+
+    def _format_duration(self, seconds: float) -> str:
+        whole_seconds = int(seconds)
+        hours = whole_seconds // 3600
+        minutes = (whole_seconds % 3600) // 60
+        secs = whole_seconds % 60
+
+        if hours > 0:
+            return f"{hours}h {minutes}m {secs}s"
+        if minutes > 0:
+            return f"{minutes}m {secs}s"
+        return f"{secs}s"
