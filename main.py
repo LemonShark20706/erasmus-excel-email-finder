@@ -196,3 +196,27 @@ class EmailFinder:
             return False
 
         return True
+
+    def is_country_compatible_email(self, email: str, country_code: Optional[str]) -> bool:
+        if "@" not in email:
+            return False
+
+        domain = email.split("@", 1)[1].strip().lower()
+        if "." not in domain:
+            return False
+
+        tld = domain.rsplit(".", 1)[-1]
+        if not tld:
+            return False
+
+        allowed = set(self.GENERIC_ALLOWED_TLDS)
+        if country_code:
+            code = country_code.strip().upper()
+            if code == "SI":
+                allowed.update({"si", "sl"})
+            elif code == "SL":
+                allowed.update({"sl", "si"})
+            else:
+                allowed.add(code.lower())
+
+        return tld in allowed
