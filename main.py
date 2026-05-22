@@ -125,3 +125,49 @@ class EmailFinder:
         cleaned = cleaned.replace("%20", "")
         cleaned = cleaned.strip().strip(".,;:()[]<>\"'")
         return cleaned
+
+    def is_valid_email(self, email: Optional[str]) -> bool:
+        if not email or "@" not in email:
+            return False
+
+        email = email.strip().lower()
+        if not re.fullmatch(EMAIL_REGEX, email):
+            return False
+
+        local_part, domain = email.split("@", 1)
+        domain = domain.strip().lower()
+        local_part = local_part.strip().lower()
+
+        if len(local_part) > 25:
+            return False
+
+        if len(local_part) < 2:
+            return False
+
+        if re.fullmatch(r"[a-fA-F0-9]{20,}", local_part):
+            return False
+
+        if ".." in domain or domain.startswith(".") or domain.endswith("."):
+            return False
+
+        if domain.startswith("-") or domain.endswith("-"):
+            return False
+
+        labels = domain.split(".")
+        if len(labels) < 2:
+            return False
+
+        if any(not label or label.startswith("-") or label.endswith("-") for label in labels):
+            return False
+
+        tld = labels[-1]
+        if tld in self.BLOCKED_TLDS:
+            return False
+
+        if domain in self.PLACEHOLDER_DOMAINS:
+            return False
+
+        if labels[0] in self.PLACEHOLDER_DOMAIN_ROOTS:
+            return False
+
+        return True
