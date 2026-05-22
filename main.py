@@ -325,3 +325,40 @@ class EmailFinder:
             return best, self.score_email(best) >= 100
 
         return None, False
+
+class ExcelStructureDetector:
+    PROJECT_KEYWORDS = (
+        "palyazat szama",
+        "palyazat azonosito",
+        "sztevilka projekta",
+        "stevilka projekta",
+        "st. projekta",
+        "st projekta",
+        "nr wniosku",
+        "project",
+    )
+
+    ORG_KEYWORDS = (
+        "szervezet neve",
+        "palyazo szervezet",
+        "organizacija",
+        "organizcija",
+        "nazwa wnioskodawcy",
+        "organization",
+    )
+
+    CITY_KEYWORDS = (
+        "szekhely",
+        "miasto",
+        "kraj",
+        "city",
+    )
+
+    IGNORE_CELL_MARKERS = (
+        "tamogatott palyazatok",
+        "tartaleklista",
+        "table",
+        "tabela",
+        "zap. st",
+        "lp.",
+    )
