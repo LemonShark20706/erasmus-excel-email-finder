@@ -897,3 +897,12 @@ class ConsoleMenuApp:
 
     def wait_for_continue(self) -> None:
         input("Szeretned folytatni? Nyomj Entert a menube valo visszalepeshez...")
+
+def main() -> None:
+    processor = SourseFolderProcessor(
+        folder_path="sources",
+        output_dir="done",
+        max_workers=MAX_WORKERS,
+    )
+    app = ConsoleMenuApp(processor)
+    app.run()
