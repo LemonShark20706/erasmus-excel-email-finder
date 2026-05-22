@@ -826,3 +826,12 @@ class SourseFolderProcessor:
         safe_percent = max(0, min(100, percent))
         filled = int((safe_percent / 100) * width)
         return "[" + ("#" * filled) + ("-" * (width - filled)) + "]"
+
+    def _render_record_progress( self, processed: int, total: int, found_count: int, verified_count: int ) -> None:
+        percent = int((processed / total) * 100) if total > 0 else 100
+        bar = self._build_progress_bar(percent, width=18)
+        line = (
+            f"Records: {bar} {percent}% | {processed}/{total} | "
+            f"Found: {found_count} | Verified: {verified_count}"
+        )
+        print(f"\r{line.ljust(120)}", end="", flush=True)
