@@ -840,3 +840,43 @@ class ConsoleMenuApp:
     def __init__(self, processor: SourseFolderProcessor) -> None:
         self.processor = processor
         self.readme_path = Path("README.md")
+
+    def run(self) -> None:
+        self.processor.startup_validator.ensure_package("questionary", "questionary")
+        load_runtime_dependencies()
+
+        while True:
+            clear_console()
+            choice = questionary.select(
+                "Valassz egy lehetoseget:",
+                choices=[
+                    "Project Config",
+                    "Show README",
+                    "Start Processing",
+                    "Exit",
+                ],
+            ).ask()
+
+            if choice == "Project Config":
+                self.processor.run_project_config()
+                self.wait_for_continue()
+                continue
+
+            if choice == "Show README":
+                self.show_readme()
+                continue
+
+            if choice == "Start Processing":
+                confirmed = questionary.confirm(
+                    "Minden keszen all, induljon a feldolgozas?",
+                    default=True,
+                ).ask()
+
+                if confirmed:
+                    self.processor.process_all()
+                else:
+                    print("[INFO] A feldolgozas megszakitva.")
+                continue
+
+            print("Kilepes.")
+            break
