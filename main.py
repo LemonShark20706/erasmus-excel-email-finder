@@ -590,3 +590,10 @@ class ExcelStructureDetector:
         if text.lower() == "nan":
             return ""
         return text
+
+    def _normalize_text(self, value: object) -> str:
+        text = self._clean_cell(value).lower()
+        decomposed = unicodedata.normalize("NFKD", text)
+        without_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
+        without_accents = re.sub(r"\s+", " ", without_accents)
+        return without_accents
