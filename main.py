@@ -582,3 +582,11 @@ class ExcelStructureDetector:
         has_letter = any(ch.isalpha() for ch in value)
 
         return has_digit and has_letter
+
+    def _clean_cell(self, value: object) -> str:
+        text = str(value) if value is not None else ""
+        text = text.replace("\n", " ").replace("\t", " ")
+        text = re.sub(r"\s+", " ", text).strip()
+        if text.lower() == "nan":
+            return ""
+        return text
