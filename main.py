@@ -675,6 +675,10 @@ class StartupFolderValidator:
             self.done_dir.mkdir(parents=True, exist_ok=True)
             print(f"[INFO] Letrehozva: {self.done_dir}")
 
+    def _ensure_required_packages(self) -> None:
+        for package_name, import_name in REQUIRED_PACKAGES.items():
+            self.ensure_package(package_name, import_name)
+
     def ensure_package(self, package_name: str, import_name: str) -> None:
         if importlib.util.find_spec(import_name) is not None:
             return
