@@ -821,3 +821,8 @@ class SourseFolderProcessor:
         header = f"Progress: {progress_bar} {percent}% | {current}/{total} | {file_name}"
         print(header)
         print("")
+
+    def _build_progress_bar(self, percent: int, width: int = 24) -> str:
+        safe_percent = max(0, min(100, percent))
+        filled = int((safe_percent / 100) * width)
+        return "[" + ("#" * filled) + ("-" * (width - filled)) + "]"
