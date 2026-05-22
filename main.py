@@ -674,3 +674,17 @@ class StartupFolderValidator:
         if not self.done_dir.exists():
             self.done_dir.mkdir(parents=True, exist_ok=True)
             print(f"[INFO] Letrehozva: {self.done_dir}")
+
+    def ensure_package(self, package_name: str, import_name: str) -> None:
+        if importlib.util.find_spec(import_name) is not None:
+            return
+
+        print(f"[INFO] Hianyzo csomag, telepites indul: {package_name}")
+        try:
+            subprocess.check_call(
+                [sys.executable, "-m", "pip", "install", package_name]
+            )
+        except subprocess.CalledProcessError as exc:
+            raise RuntimeError(
+                f"Nem sikerult telepiteni a csomagot: {package_name}"
+            ) from exc
