@@ -519,3 +519,22 @@ class ExcelStructureDetector:
                 fallback = candidate
 
         return fallback or ""
+
+    def _extract_city_from_address(self, address: str) -> str:
+        address = self._clean_cell(address)
+        if not address:
+            return ""
+
+        match = re.search(r"\b\d{4,5}\s+([^,]+)", address)
+        if match:
+            return match.group(1).strip()
+
+        parts = [part.strip() for part in address.split(",") if part.strip()]
+        if len(parts) >= 2:
+            first = parts[0]
+            first = re.sub(r"^\d{4,5}\s+", "", first)
+            if first:
+                return first
+            return parts[1]
+
+        return ""
