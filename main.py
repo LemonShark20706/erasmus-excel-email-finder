@@ -421,3 +421,10 @@ class ExcelStructureDetector:
             )
 
         return records
+
+    def _find_project_in_row(self, row_values: list[str]) -> Optional[tuple[int, str]]:
+        for idx, cell in enumerate(row_values):
+            project = self._extract_project_id(cell)
+            if project:
+                return idx, project
+        return None
