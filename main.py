@@ -428,3 +428,14 @@ class ExcelStructureDetector:
             if project:
                 return idx, project
         return None
+
+    def _extract_project_id(self, text: str) -> Optional[str]:
+        if not text:
+            return None
+
+        compact = re.sub(r"\s+", "", text.upper())
+        match = PROJECT_REGEX.search(compact)
+        if not match:
+            return None
+
+        return match.group(0)
