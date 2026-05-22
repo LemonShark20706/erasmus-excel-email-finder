@@ -597,3 +597,17 @@ class ExcelStructureDetector:
         without_accents = "".join(ch for ch in decomposed if not unicodedata.combining(ch))
         without_accents = re.sub(r"\s+", " ", without_accents)
         return without_accents
+
+    def _deduplicate(self, records: list[OrganizationRecord]) -> list[OrganizationRecord]:
+        deduped: dict[tuple[str, str, str], OrganizationRecord] = {}
+
+        for record in records:
+            key = (
+                record.project_number,
+                self._normalize_text(record.org_name),
+                self._normalize_text(record.org_city),
+            )
+            if key not in deduped:
+                deduped[key] = record
+
+        return list(deduped.values())
