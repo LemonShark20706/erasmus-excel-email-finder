@@ -583,6 +583,13 @@ class ExcelStructureDetector:
 
         return has_digit and has_letter
 
+    def _looks_like_noise(self, value: str) -> bool:
+        folded = self._normalize_text(value)
+        if not folded:
+            return True
+
+        return any(marker in folded for marker in self.IGNORE_CELL_MARKERS)
+
     def _clean_cell(self, value: object) -> str:
         text = str(value) if value is not None else ""
         text = text.replace("\n", " ").replace("\t", " ")
