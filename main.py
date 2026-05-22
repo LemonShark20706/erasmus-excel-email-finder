@@ -494,3 +494,28 @@ class ExcelStructureDetector:
                 return candidate
 
         return ""
+
+    def _pick_city( self, row_values: list[str], org_col: int, header_city_col: Optional[int], address: str ) -> str:
+        if header_city_col is not None and header_city_col < len(row_values):
+            candidate = self._clean_cell(row_values[header_city_col])
+            if self._is_city_candidate(candidate):
+                return candidate
+
+        if address:
+            extracted = self._extract_city_from_address(address)
+            if extracted:
+                return extracted
+
+        fallback: Optional[str] = None
+        for col in range(org_col + 1, len(row_values)):
+            candidate = self._clean_cell(row_values[col])
+            if not self._is_city_candidate(candidate):
+                continue
+
+            if len(candidate) <= 40 and not any(ch.isdigit() for ch in candidate):
+                return candidate
+
+            if fallback is None:
+                fallback = candidate
+
+        return fallback or ""
