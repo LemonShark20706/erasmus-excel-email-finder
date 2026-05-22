@@ -657,3 +657,20 @@ class StartupFolderValidator:
     def __init__(self, source_dir: Path, done_dir: Path) -> None:
         self.source_dir = source_dir
         self.done_dir = done_dir
+
+    def validate(self) -> None:
+        self._ensure_required_packages()
+
+        if self.source_dir.exists() and not self.source_dir.is_dir():
+            raise NotADirectoryError(f"A forras utvonal nem mappa: {self.source_dir}")
+
+        if self.done_dir.exists() and not self.done_dir.is_dir():
+            raise NotADirectoryError(f"A done utvonal nem mappa: {self.done_dir}")
+
+        if not self.source_dir.exists():
+            self.source_dir.mkdir(parents=True, exist_ok=True)
+            print(f"[INFO] Letrehozva: {self.source_dir}")
+
+        if not self.done_dir.exists():
+            self.done_dir.mkdir(parents=True, exist_ok=True)
+            print(f"[INFO] Letrehozva: {self.done_dir}")
