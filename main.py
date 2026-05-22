@@ -71,3 +71,48 @@ class EmailLookupResult:
     org_city: str
     email: Optional[str]
     verified: bool
+
+class EmailFinder:
+    BLOCKED_TLDS = {
+        "png",
+        "jpg",
+        "jpeg",
+        "gif",
+        "svg",
+        "webp",
+        "ico",
+        "bmp",
+        "tiff",
+        "pdf",
+        "css",
+        "js",
+        "json",
+        "xml",
+        "txt",
+        "zip",
+        "rar",
+        "7z",
+    }
+
+    GENERIC_ALLOWED_TLDS = {"com", "net"}
+
+    PLACEHOLDER_DOMAINS = {
+        "mysite",
+        "mysite.com",
+        "example.com",
+        "example.org",
+        "example.net",
+        "yourdomain.com",
+        "domain.com",
+        "test.com",
+        "localhost",
+    }
+
+    PLACEHOLDER_DOMAIN_ROOTS = {
+        "mysite",
+        "example",
+        "domain",
+        "test",
+        "localhost",
+    }
+
