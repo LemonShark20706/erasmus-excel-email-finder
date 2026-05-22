@@ -465,3 +465,16 @@ class ExcelStructureDetector:
                 best_score = score
 
         return best_map
+
+    def _pick_org_column(self, row_values: list[str], project_col: int, header_org_col: Optional[int]) -> Optional[int]:
+        if header_org_col is not None and header_org_col < len(row_values):
+            candidate = self._clean_cell(row_values[header_org_col])
+            if self._is_org_candidate(candidate):
+                return header_org_col
+
+        for col in range(project_col + 1, len(row_values)):
+            candidate = self._clean_cell(row_values[col])
+            if self._is_org_candidate(candidate):
+                return col
+
+        return None
