@@ -703,3 +703,32 @@ class SourseFolderProcessor:
         self.startup_validator.validate()
         load_runtime_dependencies()
         print("[OK] Project config kesz: csomagok es mappak rendben.")
+
+    def process_all(self) -> None:
+        start = time.perf_counter()
+        self.run_project_config()
+
+        excel_files = sorted(self.folder.glob("*.xlsx"))
+        if not excel_files:
+            print(f"Nincs feldolgozhato Excel: {self.folder}")
+            return
+
+        print(f"Feldolgozas indul: {len(excel_files)} fajl")
+
+        for index, excel_file in enumerate(excel_files, start=1):
+            self._render_progress_header(index, len(excel_files), excel_file.name)
+            records = self.detector.extract_records(excel_file)
+            if not records:
+                print(f"[SKIP] {excel_file.name}: nincs feldolgozhato sor")
+                continue
+
+            print(f"[INFO] {excel_file.name}: {len(records)} rekord")
+            file_results = self._process_records(records)
+
+            output_name = f"{excel_file.stem}_emails_output.xlsx"
+            output_path = self.output_dir / output_name
+            self.writer.write(file_results, output_path)
+            print(f"[OK] Elkeszult: {output_path}")
+
+        elapsed = time.perf_counter() - start
+        print(f"Befejezve: {self._format_duration(elapsed)}")
