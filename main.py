@@ -61,3 +61,13 @@ class OrganizationRecord:
     org_name: str
     org_address: str
     org_city: str
+
+@dataclass(frozen=True)
+class EmailLookupResult:
+    source_file: str
+    sheet_name: str
+    project_number: str
+    org_name: str
+    org_city: str
+    email: Optional[str]
+    verified: bool
