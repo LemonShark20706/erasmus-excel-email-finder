@@ -362,3 +362,18 @@ class ExcelStructureDetector:
         "zap. st",
         "lp.",
     )
+
+    def extract_records(self, excel_path: Path) -> list[OrganizationRecord]:
+        records: list[OrganizationRecord] = []
+
+        try:
+            workbook = pd.ExcelFile(excel_path)
+        except Exception as exc:
+            print(f"[WARN] Nem sikerult megnyitni: {excel_path.name} ({exc})")
+            return records
+
+        for sheet_name in workbook.sheet_names:
+            sheet_records = self._extract_records_from_sheet(excel_path, sheet_name)
+            records.extend(sheet_records)
+
+        return self._deduplicate(records)
