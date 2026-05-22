@@ -478,3 +478,19 @@ class ExcelStructureDetector:
                 return col
 
         return None
+
+    def _pick_address(self, row_values: list[str], org_col: int, city_col: Optional[int]) -> str:
+        if city_col is not None and city_col < len(row_values):
+            candidate = self._clean_cell(row_values[city_col])
+            if self._looks_like_address(candidate):
+                return candidate
+
+        for col in range(org_col + 1, len(row_values)):
+            if city_col is not None and col == city_col:
+                continue
+
+            candidate = self._clean_cell(row_values[col])
+            if self._looks_like_address(candidate):
+                return candidate
+
+        return ""
