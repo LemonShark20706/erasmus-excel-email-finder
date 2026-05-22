@@ -688,3 +688,13 @@ class StartupFolderValidator:
             raise RuntimeError(
                 f"Nem sikerult telepiteni a csomagot: {package_name}"
             ) from exc
+
+class SourseFolderProcessor:
+    def __init__( self, folder_path: str = "sources", output_dir: str = "done", max_workers: int = MAX_WORKERS ) -> None:
+        self.folder = Path(folder_path)
+        self.output_dir = Path(output_dir)
+        self.max_workers = max_workers
+        self.finder = EmailFinder()
+        self.detector = ExcelStructureDetector()
+        self.writer = OutputExcelWriter()
+        self.startup_validator = StartupFolderValidator(self.folder, self.output_dir)
