@@ -267,3 +267,61 @@ class EmailFinder:
             score -= 20
 
         return score
+
+    def find_email(self, org_name: str, country_code: Optional[str] = None) -> tuple[Optional[str], bool]:
+        found_emails: list[str] = []
+        queries = [f"{org_name} email", f'"{org_name}" contact']
+
+        for query in queries:
+            try:
+                with DDGS() as ddgs:
+                    results = list(ddgs.text(query, max_results=MAX_RESULTS))
+
+                for result in results:
+                    url = result.get("href", "")
+                    text = " ".join([
+                        result.get("title", ""),
+                        result.get("body", ""),
+                        url,
+                    ])
+
+                    for email in re.findall(EMAIL_REGEX, text):
+                        candidate = self.clean_email(email)
+                        if (
+                            candidate
+                            and self.is_valid_email(candidate)
+                            and self.is_preferred_email(candidate)
+                            and self.is_country_compatible_email(candidate, country_code)
+                        ):
+                            if self.score_email(candidate) >= 100:
+                                return candidate, True
+                            found_emails.append(candidate)
+
+                    if not url:
+                        continue
+
+                    try:
+                        response = requests.get(url, headers=HEADERS, timeout=TIMEOUT)
+                        for email in re.findall(EMAIL_REGEX, response.text):
+                            candidate = self.clean_email(email)
+                            if (
+                                candidate
+                                and self.is_valid_email(candidate)
+                                and self.is_preferred_email(candidate)
+                                and self.is_country_compatible_email(candidate, country_code)
+                            ):
+                                if self.score_email(candidate) >= 100:
+                                    return candidate, True
+                                found_emails.append(candidate)
+                    except Exception:
+                        continue
+
+            except Exception:
+                continue
+
+        if found_emails:
+            unique = sorted(set(found_emails), key=self.score_email, reverse=True)
+            best = unique[0]
+            return best, self.score_email(best) >= 100
+
+        return None, False
