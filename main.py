@@ -880,3 +880,17 @@ class ConsoleMenuApp:
 
             print("Kilepes.")
             break
+
+    def show_readme(self) -> None:
+        if not self.readme_path.exists():
+            print(f"[WARN] Nem talalhato README: {self.readme_path}")
+            input("Nyomj Entert a visszalepeshez...")
+            return
+
+        content = self.readme_path.read_text(encoding="utf-8")
+        print("\n" + "=" * 60)
+        print("README.md")
+        print("=" * 60)
+        print(content)
+        print("=" * 60 + "\n")
+        self.wait_for_continue()
