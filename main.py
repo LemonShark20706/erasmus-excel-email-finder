@@ -572,3 +572,13 @@ class ExcelStructureDetector:
         has_letters = any(ch.isalpha() for ch in value)
         mostly_digits = bool(re.fullmatch(r"[\d\s.,-]+", value))
         return has_letters and not mostly_digits
+
+    def _looks_like_address(self, value: str) -> bool:
+        value = self._clean_cell(value)
+        if len(value) < 6:
+            return False
+
+        has_digit = any(ch.isdigit() for ch in value)
+        has_letter = any(ch.isalpha() for ch in value)
+
+        return has_digit and has_letter
