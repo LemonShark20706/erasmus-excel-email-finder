@@ -812,3 +812,12 @@ class SourseFolderProcessor:
         if minutes > 0:
             return f"{minutes}m {secs}s"
         return f"{secs}s"
+
+    def _render_progress_header(self, current: int, total: int, file_name: str) -> None:
+        clear_console()
+        completed = max(0, current - 1)
+        percent = int((completed / total) * 100) if total > 0 else 0
+        progress_bar = self._build_progress_bar(percent)
+        header = f"Progress: {progress_bar} {percent}% | {current}/{total} | {file_name}"
+        print(header)
+        print("")
