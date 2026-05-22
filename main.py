@@ -52,3 +52,12 @@ def load_runtime_dependencies() -> None:
     xlsxwriter = importlib.import_module("xlsxwriter")
     DDGS = getattr(importlib.import_module("ddgs"), "DDGS")
     questionary = importlib.import_module("questionary")
+
+@dataclass(frozen=True)
+class OrganizationRecord:
+    source_file: str
+    sheet_name: str
+    project_number: str
+    org_name: str
+    org_address: str
+    org_city: str
