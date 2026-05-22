@@ -835,3 +835,8 @@ class SourseFolderProcessor:
             f"Found: {found_count} | Verified: {verified_count}"
         )
         print(f"\r{line.ljust(120)}", end="", flush=True)
+
+class ConsoleMenuApp:
+    def __init__(self, processor: SourseFolderProcessor) -> None:
+        self.processor = processor
+        self.readme_path = Path("README.md")
