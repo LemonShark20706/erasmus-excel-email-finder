@@ -40,3 +40,6 @@ requests = None
 xlsxwriter = None
 DDGS = None
 questionary = None
+
+def clear_console() -> None:
+    os.system("cls" if os.name == "nt" else "clear")
