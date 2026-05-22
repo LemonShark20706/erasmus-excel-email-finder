@@ -698,3 +698,8 @@ class SourseFolderProcessor:
         self.detector = ExcelStructureDetector()
         self.writer = OutputExcelWriter()
         self.startup_validator = StartupFolderValidator(self.folder, self.output_dir)
+
+    def run_project_config(self) -> None:
+        self.startup_validator.validate()
+        load_runtime_dependencies()
+        print("[OK] Project config kesz: csomagok es mappak rendben.")
