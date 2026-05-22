@@ -220,3 +220,50 @@ class EmailFinder:
                 allowed.add(code.lower())
 
         return tld in allowed
+
+    def score_email(self, email: str) -> int:
+        email_lower = email.lower()
+        local_part = email_lower.split("@", 1)[0]
+
+        score = 0
+
+        strong_keywords = [
+            "office",
+            "sekretariat",
+            "secretary",
+            "secretariat",
+            "direktion",
+            "director",
+            "post",
+            "info",
+            "kontakt",
+            "contact",
+            "verwaltung",
+            "admin",
+            "school",
+        ]
+
+        for keyword in strong_keywords:
+            if keyword in local_part:
+                score += 100
+
+        official_domain_parts = [
+            "schule",
+            "edu",
+            "ac.at",
+            "gv.at",
+            "school",
+            "gym",
+        ]
+
+        for part in official_domain_parts:
+            if part in email_lower:
+                score += 20
+
+        if "." in local_part or "_" in local_part:
+            score -= 10
+
+        if len(local_part) > 20:
+            score -= 20
+
+        return score
