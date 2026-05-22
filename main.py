@@ -171,3 +171,28 @@ class EmailFinder:
             return False
 
         return True
+
+    def is_preferred_email(self, email: str) -> bool:
+        email_lower = email.lower()
+        local_part = email_lower.split("@", 1)[0]
+        domain = email_lower.split("@", 1)[1] if "@" in email_lower else ""
+
+        blocked = [
+            "noreply",
+            "no-reply",
+            "support",
+            "cloudflare",
+            "hostmaster",
+            "webmaster",
+            "abuse",
+        ]
+        if any(word in email_lower for word in blocked):
+            return False
+
+        if local_part == "admin" and (
+            domain in self.PLACEHOLDER_DOMAINS
+            or domain.split(".", 1)[0] in self.PLACEHOLDER_DOMAIN_ROOTS
+        ):
+            return False
+
+        return True
