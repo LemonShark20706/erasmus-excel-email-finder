@@ -439,3 +439,29 @@ class ExcelStructureDetector:
             return None
 
         return match.group(0)
+
+    def _find_nearby_header_map(self, raw: pd.DataFrame, row_idx: int) -> dict[str, int]:
+        best_map: dict[str, int] = {}
+        best_score = 0
+
+        for idx in range(max(0, row_idx - 8), row_idx):
+            values = [self._normalize_text(v) for v in raw.iloc[idx].tolist()]
+            mapping: dict[str, int] = {}
+
+            for col, cell in enumerate(values):
+                if not cell:
+                    continue
+
+                if "project" not in mapping and any(keyword in cell for keyword in self.PROJECT_KEYWORDS):
+                    mapping["project"] = col
+                if "org" not in mapping and any(keyword in cell for keyword in self.ORG_KEYWORDS):
+                    mapping["org"] = col
+                if "city" not in mapping and any(keyword in cell for keyword in self.CITY_KEYWORDS):
+                    mapping["city"] = col
+
+            score = len(mapping)
+            if score > best_score:
+                best_map = mapping
+                best_score = score
+
+        return best_map
