@@ -116,3 +116,12 @@ class EmailFinder:
         "localhost",
     }
 
+    def clean_email(self, email: str) -> Optional[str]:
+        if not email:
+            return None
+
+        cleaned = unquote(email)
+        cleaned = cleaned.replace("mailto:", "")
+        cleaned = cleaned.replace("%20", "")
+        cleaned = cleaned.strip().strip(".,;:()[]<>\"'")
+        return cleaned
