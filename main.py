@@ -894,3 +894,6 @@ class ConsoleMenuApp:
         print(content)
         print("=" * 60 + "\n")
         self.wait_for_continue()
+
+    def wait_for_continue(self) -> None:
+        input("Szeretned folytatni? Nyomj Entert a menube valo visszalepeshez...")
