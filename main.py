@@ -554,3 +554,21 @@ class ExcelStructureDetector:
         mostly_digits = bool(re.fullmatch(r"[\d\s.,-]+", value))
 
         return has_letters and not mostly_digits
+
+    def _is_city_candidate(self, value: str) -> bool:
+        value = self._clean_cell(value)
+        if not value:
+            return False
+
+        if self._extract_project_id(value):
+            return False
+
+        if self._looks_like_noise(value):
+            return False
+
+        if len(value) > 80:
+            return False
+
+        has_letters = any(ch.isalpha() for ch in value)
+        mostly_digits = bool(re.fullmatch(r"[\d\s.,-]+", value))
+        return has_letters and not mostly_digits
